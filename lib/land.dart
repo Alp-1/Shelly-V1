@@ -35,32 +35,32 @@ class _LandState extends State<LandView>{
         print(event);
         if(event is KeyDownEvent){
           if (event.logicalKey.keyLabel == "W"){
-            url = 'http://michiels-macbook-pro.local:5000/land?query=forward';
+            url = 'http://robot.local:5000/land?query=forward';
             await send_Data(url);
           }
           if (event.logicalKey.keyLabel == "A"){
-            url = 'http://michiels-macbook-pro.local:5000/land?query=left';
+            url = 'http://robot.local:5000/land?query=left';
             await send_Data(url);
           }
           if (event.logicalKey.keyLabel == "S"){
-            url = 'http://michiels-macbook-pro.local:5000/land?query=backward';
+            url = 'http://robot.local:5000/land?query=backward';
             await send_Data(url);
           }
           if (event.logicalKey.keyLabel == "D"){
-            url = 'http://michiels-macbook-pro.local:5000/land?query=right';
+            url = 'http://robot.local:5000/land?query=right';
             await send_Data(url);
           }
           if (event.logicalKey.keyLabel == "Q"){
-            url = 'http://michiels-macbook-pro.local:5000/land?query=anticlockwise';
+            url = 'http://robot.local:5000/land?query=anticlockwise';
             await send_Data(url);
           }
           if (event.logicalKey.keyLabel == "E"){
-            url = 'http://michiels-macbook-pro.local:5000/land?query=clockwise';
+            url = 'http://robot.local:5000/land?query=clockwise';
             await send_Data(url);
           }
         }
         else if (event is KeyUpEvent){
-          url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+          url = 'http://robot.local:5000/land?query=stop';
           await send_Data(url);
         }
       },
@@ -80,11 +80,11 @@ class _LandState extends State<LandView>{
                       children: [
                         GestureDetector(
                           onTapDown:  (details) async {
-                            url = 'http://michiels-macbook-pro.local:5000/land?query=clockwise';
+                            url = 'http://robot.local:5000/land?query=clockwise';
                             await send_Data(url);
                           },
                           onTapUp: (details) async {
-                            url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                            url = 'http://robot.local:5000/land?query=stop';
                             await send_Data(url);
                           },
                           child: const Icon(
@@ -97,11 +97,11 @@ class _LandState extends State<LandView>{
                             child:
                             GestureDetector(
                               onTapDown:  (details) async {
-                                url = 'http://michiels-macbook-pro.local:5000/land?query=anticlockwise';
+                                url = 'http://robot.local:5000/land?query=anticlockwise';
                                 await send_Data(url);
                               },
                               onTapUp: (details) async {
-                                url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                                url = 'http://robot.local:5000/land?query=stop';
                                 await send_Data(url);
                               },
                               child: const Icon(
@@ -115,11 +115,11 @@ class _LandState extends State<LandView>{
                       children: [
                         GestureDetector(
                           onTapDown:  (details) async {
-                            url = 'http://michiels-macbook-pro.local:5000/land?query=forward';
+                            url = 'http://robot.local:5000/land?query=forward';
                             await send_Data(url);
                           },
                           onTapUp: (details) async {
-                            url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                            url = 'http://robot.local:5000/land?query=stop';
                             await send_Data(url);
                           },
                           child: const Icon(
@@ -131,11 +131,11 @@ class _LandState extends State<LandView>{
                             children:[
                               GestureDetector(
                                 onTapDown:  (details) async {
-                                  url = 'http://michiels-macbook-pro.local:5000/land?query=left';
+                                  url = 'http://robot.local:5000/land?query=left';
                                   await send_Data(url);
                                 },
                                 onTapUp: (details) async {
-                                  url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                                  url = 'http://robot.local:5000/land?query=stop';
                                   await send_Data(url);
                                 },
                                 child: const Icon(
@@ -144,11 +144,11 @@ class _LandState extends State<LandView>{
                               ),
                               GestureDetector(
                                 onTapDown:  (details) async {
-                                  url = 'http://michiels-macbook-pro.local:5000/land?query=right';
+                                  url = 'http://robot.local:5000/land?query=right';
                                   await send_Data(url);
                                 },
                                 onTapUp: (details) async {
-                                  url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                                  url = 'http://robot.local:5000/land?query=stop';
                                   await send_Data(url);
                                 },
                                 child: const Icon(
@@ -159,11 +159,11 @@ class _LandState extends State<LandView>{
                         ),
                         GestureDetector(
                           onTapDown:  (details) async {
-                            url = 'http://michiels-macbook-pro.local:5000/land?query=backward';
+                            url = 'http://robot.local:5000/land?query=backward';
                             await send_Data(url);
                           },
                           onTapUp: (details) async {
-                            url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                            url = 'http://robot.local:5000/land?query=stop';
                             await send_Data(url);
                           },
                           child: const Icon(

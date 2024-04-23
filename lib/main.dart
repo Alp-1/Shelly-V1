@@ -42,7 +42,7 @@ Future<String> get_Data(String url) async {
 class _MyHomePageState extends State<MyHomePage> {
   int previous = -1;
   LandView lv = LandView();
-  String ip = "michiels-macbook-pro.local";
+  String ip = "robot.local";
   String port = "5000";
   @override
   Widget build(BuildContext context) {

@@ -252,7 +252,7 @@ class _SubmergedState extends State<SubmergedView> {
               child: const Text("Clear command")),
           ElevatedButton(
               onPressed: () {
-                String string = "http://michiels-macbook-pro.local:5000/water?commands=[";
+                String string = "http://robot.local:5000/water?commands=[";
                 for (int index = 0; index < widgets.length; index++){
                   commands[index].add(controllers[index].text);
                   string += '['+commands[index][0]+','+controllers[index].text+']';

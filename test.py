@@ -5,7 +5,7 @@ import asyncio
 import cv2, base64
 import threading
 c = threading.Condition()
-size = [900,350]
+size = ['960','312']
 
 cap = cv2.VideoCapture(0)
 
@@ -14,7 +14,7 @@ while cap.isOpened():
 
     c.acquire()
     print(frame)
-    frame = cv2.resize(frame, (size[0],size[1]))
+    frame = cv2.resize(frame, (int(size[0]),int(size[1])))
     print(size)
     c.release()
 

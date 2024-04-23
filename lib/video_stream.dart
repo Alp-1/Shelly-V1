@@ -12,7 +12,7 @@ class VideoStream extends StatefulWidget {
 }
 
 class _VideoStreamState extends State<VideoStream> {
-  final WebSocket _socket = WebSocket("ws://127.0.0.1:5001");
+  final WebSocket _socket = WebSocket("ws://michiels-macbook-pro.local:5001");
   bool _isConnected = false;
   void connect(BuildContext context) async {
     _socket.connect();
@@ -30,33 +30,9 @@ class _VideoStreamState extends State<VideoStream> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Live Video"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () => connect(context),
-                    child: const Text("Connect"),
-                  ),
-                  ElevatedButton(
-                    onPressed: disconnect,
-                    child: const Text("Disconnect"),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 50.0,
-              ),
-              _isConnected
-                  ? StreamBuilder(
+    connect(context);
+    return Center(
+          child: _isConnected ? StreamBuilder(
                 stream: _socket.stream,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
@@ -81,10 +57,6 @@ class _VideoStreamState extends State<VideoStream> {
                 },
               )
                   : const Text("Initiate Connection")
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

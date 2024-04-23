@@ -2,7 +2,6 @@ import 'package:bio_robotics/water.dart';
 import 'package:bio_robotics/land.dart';
 import 'package:bio_robotics/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:bio_robotics/progress_bar.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
@@ -42,6 +41,9 @@ Future<String> get_Data(String url) async {
 
 class _MyHomePageState extends State<MyHomePage> {
   int previous = -1;
+  LandView lv = LandView();
+  String ip = "michiels-macbook-pro.local";
+  String port = "5000";
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -55,13 +57,13 @@ class _MyHomePageState extends State<MyHomePage> {
             isScrollable: false,
             onTap: (index){
               if(previous != index && index == 0){
-                get_Data('http://127.0.0.1:5000/land?size='+(0.8 * MediaQuery.of(context).size.width).round().toString()+','+(0.5 * MediaQuery.of(context).size.height).round().toString());
+                get_Data('http://'+ip+':'+port+'/land?size='+(0.75 * MediaQuery.of(context).size.width).round().toString()+','+(0.75 * MediaQuery.of(context).size.height).round().toString());
               }
               else if (previous != index && index == 1){
-                get_Data('http://127.0.0.1:5000/water');
+                get_Data('http://'+ip+':'+port+'/water');
               }
               else if (previous != index && index == 2){
-                get_Data('http://127.0.0.1:5000/settings');
+                get_Data('http://'+ip+':'+port+'/settings');
               }
               previous = index;
               print(previous);
@@ -85,9 +87,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: TabBarView(
           children: <Widget>[
-            LandView(),
+            lv,
             SubmergedView(),
-            Settings(),
+            Settings(
+            ),
           ],
         ),
       ),

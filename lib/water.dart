@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:permission_handler/permission_handler.dart';
 import 'download.dart';
 
@@ -17,21 +16,20 @@ class _SubmergedState extends State<SubmergedView> {
   String result = '0';
   int _counter = 0;
   List<Widget> widgets = [];
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  List<List<String>> commands = [];
+  List<TextEditingController> controllers = [];
 
   Future<String> get_Data(String url) async {
     http.Response response = await http.get(Uri.parse(url));
     return response.body;
   }
 
+  Future<void> send_Data(String url) async {
+    await http.get(Uri.parse(url));
+  }
+
   @override
   Widget build(BuildContext context) {
-    String content = '';
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -43,6 +41,7 @@ class _SubmergedState extends State<SubmergedView> {
                 onAcceptWithDetails: (details) {
                   var txt = TextEditingController();
                   setState(() {
+                    TextEditingController _controller = TextEditingController(text: '0');
                     widgets.add(Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
@@ -65,8 +64,12 @@ class _SubmergedState extends State<SubmergedView> {
                                   margin: EdgeInsets.only(
                                       right: .01 *
                                           MediaQuery.of(context).size.width),
-                                  child: TextField()))
+                                  child: TextField(
+                                    controller:_controller,
+                                  )))
                         ]));
+                    controllers.add(_controller);
+                    commands.add([details.data]);
                     txt.text = details.data;
                   });
                 },
@@ -173,38 +176,6 @@ class _SubmergedState extends State<SubmergedView> {
                       margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
                       child: Draggable<String>(
                         feedback: Text(
-                          'Clockwise',
-                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
-
-                        ),
-                        child: Text('Clockwise',
-                          style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
-                        ),
-                        data: 'Clockwise',
-                        onDraggableCanceled: (velocity, offset) {},
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
-                      child: Draggable<String>(
-                        feedback: Text(
-                          'Anticlockwise',
-                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
-
-                        ),
-                        child: Text('Anticlockwise',
-                          style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
-                        ),
-                        data: 'Anticlockwise',
-                        onDraggableCanceled: (velocity, offset) {},
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
-                      child: Draggable<String>(
-                        feedback: Text(
                           'Up',
                           style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
 
@@ -232,11 +203,46 @@ class _SubmergedState extends State<SubmergedView> {
                         onDraggableCanceled: (velocity, offset) {},
                       ),
                     ),
+
+                    Container(
+                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
+                      child: Draggable<String>(
+                        feedback: Text(
+                          'Start record',
+                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
+
+                        ),
+                        child: Text('Start record',
+                          style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
+                        ),
+                        data: 'Start record',
+                        onDraggableCanceled: (velocity, offset) {},
+                      ),
+                    ),
+
+                    Container(
+                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
+                      child: Draggable<String>(
+                        feedback: Text(
+                          'Stop record',
+                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
+
+                        ),
+                        child: Text('Stop record',
+                          style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
+                        ),
+                        data: 'Stop record',
+                        onDraggableCanceled: (velocity, offset) {},
+                      ),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+            children:[
           ElevatedButton(
               onPressed: () {
                 setState(() {
@@ -246,7 +252,13 @@ class _SubmergedState extends State<SubmergedView> {
               child: const Text("Clear command")),
           ElevatedButton(
               onPressed: () {
-
+                String string = "http://michiels-macbook-pro.local:5000/water?commands=[";
+                for (int index = 0; index < widgets.length; index++){
+                  commands[index].add(controllers[index].text);
+                  string += '['+commands[index][0]+','+controllers[index].text+']';
+                  print(controllers[index].text);
+                }
+                send_Data(string+']');
               },
               child: const Text("Send command")),
           ElevatedButton(
@@ -254,6 +266,8 @@ class _SubmergedState extends State<SubmergedView> {
                 download_file();
               },
               child: const Text("Download File")),
+            ]
+          )
         ],
       ),
     );

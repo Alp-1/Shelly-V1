@@ -19,79 +19,90 @@ class _LandState extends State<LandView>{
   String url = '';
   String data = '';
   String result = '0';
-  int _counter = 0;
+  VideoStream vs = VideoStream();
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  Future<void> send_Data(String url) async {
+    await http.get(Uri.parse(url));
   }
 
-  Future<String> get_Data(String url) async {
-    http.Response response = await http.get(Uri.parse(url));
-    return response.body;
-  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return CallbackShortcuts(
-      bindings: <ShortcutActivator, VoidCallback>{
-        const SingleActivator(LogicalKeyboardKey.arrowUp): () {
-
-        },
-        const SingleActivator(LogicalKeyboardKey.arrowDown): () {
-
-        },
-        const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
-
-        },
-        const SingleActivator(LogicalKeyboardKey.arrowRight): () {
-
-        },
-        const SingleActivator(LogicalKeyboardKey.space): () {
-
-        },
+    return KeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKeyEvent: (event) async {
+        print(event);
+        if(event is KeyDownEvent){
+          if (event.logicalKey.keyLabel == "W"){
+            url = 'http://michiels-macbook-pro.local:5000/land?query=forward';
+            await send_Data(url);
+          }
+          if (event.logicalKey.keyLabel == "A"){
+            url = 'http://michiels-macbook-pro.local:5000/land?query=left';
+            await send_Data(url);
+          }
+          if (event.logicalKey.keyLabel == "S"){
+            url = 'http://michiels-macbook-pro.local:5000/land?query=backward';
+            await send_Data(url);
+          }
+          if (event.logicalKey.keyLabel == "D"){
+            url = 'http://michiels-macbook-pro.local:5000/land?query=right';
+            await send_Data(url);
+          }
+          if (event.logicalKey.keyLabel == "Q"){
+            url = 'http://michiels-macbook-pro.local:5000/land?query=anticlockwise';
+            await send_Data(url);
+          }
+          if (event.logicalKey.keyLabel == "E"){
+            url = 'http://michiels-macbook-pro.local:5000/land?query=clockwise';
+            await send_Data(url);
+          }
+        }
+        else if (event is KeyUpEvent){
+          url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+          await send_Data(url);
+        }
       },
-      child: Focus(
-        autofocus: true,
-        child: Center(
+      child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(
-                width: .9 * MediaQuery.of(context).size.width,
-                height: .55  * MediaQuery.of(context).size.height,
-                child: VideoStream(),
+                width: .75 * MediaQuery.of(context).size.width,
+                height: .75  * MediaQuery.of(context).size.height,
+                child: vs,
               ),
               Row (
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:[
                     Column(
                       children: [
-                        ElevatedButton(
-                          onPressed: () async {
-                            url = 'http://127.0.0.1:5000/test?query=clockwise';
-                            data = await get_Data(url);
-                            var json = jsonDecode(data);
-                            setState(() {
-                              result = json['output'];
-                            });
+                        GestureDetector(
+                          onTapDown:  (details) async {
+                            url = 'http://michiels-macbook-pro.local:5000/land?query=clockwise';
+                            await send_Data(url);
+                          },
+                          onTapUp: (details) async {
+                            url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                            await send_Data(url);
                           },
                           child: const Icon(
                             Icons.redo_outlined,
                           ),
                         ),
+
                         Transform.rotate(
                             angle: 180 * pi / 180,
                             child:
-                            ElevatedButton(
-                              onPressed: () async {
-                                url = 'http://127.0.0.1:5000/test?query=anticlockwise';
-                                data = await get_Data(url);
-                                var json = jsonDecode(data);
-                                setState(() {
-                                  result = json['output'];
-                                });
+                            GestureDetector(
+                              onTapDown:  (details) async {
+                                url = 'http://michiels-macbook-pro.local:5000/land?query=anticlockwise';
+                                await send_Data(url);
+                              },
+                              onTapUp: (details) async {
+                                url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                                await send_Data(url);
                               },
                               child: const Icon(
                                 Icons.undo_outlined,
@@ -102,14 +113,14 @@ class _LandState extends State<LandView>{
                     ),
                     Column(
                       children: [
-                        ElevatedButton(
-                          onPressed: () async {
-                            url = 'http://127.0.0.1:5000/test?query=forward';
-                            data = await get_Data(url);
-                            var json = jsonDecode(data);
-                            setState(() {
-                              result = json['output'];
-                            });
+                        GestureDetector(
+                          onTapDown:  (details) async {
+                            url = 'http://michiels-macbook-pro.local:5000/land?query=forward';
+                            await send_Data(url);
+                          },
+                          onTapUp: (details) async {
+                            url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                            await send_Data(url);
                           },
                           child: const Icon(
                             Icons.keyboard_arrow_up_outlined,
@@ -118,40 +129,27 @@ class _LandState extends State<LandView>{
                         Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children:[
-                              ElevatedButton(
-                                onPressed: () async {
-                                  url = 'http://127.0.0.1:5000/test?query=right';
-                                  data = await get_Data(url);
-                                  var json = jsonDecode(data);
-                                  setState(() {
-                                    result = json['output'];
-                                  });
+                              GestureDetector(
+                                onTapDown:  (details) async {
+                                  url = 'http://michiels-macbook-pro.local:5000/land?query=left';
+                                  await send_Data(url);
+                                },
+                                onTapUp: (details) async {
+                                  url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                                  await send_Data(url);
                                 },
                                 child: const Icon(
                                   Icons.keyboard_arrow_left_outlined,
                                 ),
                               ),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  url = 'http://127.0.0.1:5000/test?query=stop';
-                                  data = await get_Data(url);
-                                  var json = jsonDecode(data);
-                                  setState(() {
-                                    result = json['output'];
-                                  });
+                              GestureDetector(
+                                onTapDown:  (details) async {
+                                  url = 'http://michiels-macbook-pro.local:5000/land?query=right';
+                                  await send_Data(url);
                                 },
-                                child: const Icon(
-                                  Icons.pause,
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  url = 'http://127.0.0.1:5000/test?query=right';
-                                  data = await get_Data(url);
-                                  var json = jsonDecode(data);
-                                  setState(() {
-                                    result = json['output'];
-                                  });
+                                onTapUp: (details) async {
+                                  url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                                  await send_Data(url);
                                 },
                                 child: const Icon(
                                   Icons.keyboard_arrow_right_outlined,
@@ -159,14 +157,14 @@ class _LandState extends State<LandView>{
                               ),
                             ]
                         ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            url = 'http://127.0.0.1:5000/test?query=backward';
-                            data = await get_Data(url);
-                            var json = jsonDecode(data);
-                            setState(() {
-                              result = json['output'];
-                            });
+                        GestureDetector(
+                          onTapDown:  (details) async {
+                            url = 'http://michiels-macbook-pro.local:5000/land?query=backward';
+                            await send_Data(url);
+                          },
+                          onTapUp: (details) async {
+                            url = 'http://michiels-macbook-pro.local:5000/land?query=stop';
+                            await send_Data(url);
                           },
                           child: const Icon(
                             Icons.keyboard_arrow_down_outlined,
@@ -174,61 +172,12 @@ class _LandState extends State<LandView>{
                         ),
                       ]
                     ),
-                    Column(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () async {
-                              url = 'http://127.0.0.1:5000/test?query=up';
-                              data = await get_Data(url);
-                              var json = jsonDecode(data);
-                              setState(() {
-                                result = json['output'];
-                              });
-                            },
-                            child: const Icon(
-                              Icons.arrow_upward_outlined,
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              url = 'http://127.0.0.1:5000/test?query=down';
-                              data = await get_Data(url);
-                              var json = jsonDecode(data);
-                              setState(() {
-                                result = json['output'];
-                              });
-                            },
-                            child: const Icon(
-                              Icons.arrow_downward_outlined,
-                            ),
-                          ),
-                        ]
-                    ),
                   ]
-                ),
-                Text(
-                  'Moving '+result,
-                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ],
           ),
         ),
-      ),
     );
-  }
-
-  static void download_file(){
-    download('I am a test file'.codeUnits,'test.txt');
-  }
-
-  static Future<bool> _permissionRequest() async {
-    PermissionStatus result;
-    result = await Permission.storage.request();
-    if (result.isGranted) {
-      return true;
-    } else {
-      return false;
-    }
   }
 }
 

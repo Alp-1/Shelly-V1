@@ -1,0 +1,8 @@
+Forward:100
+Left:20
+Forward:50
+Left:10
+Up:50
+Forward:20
+Right:20
+Backward:40

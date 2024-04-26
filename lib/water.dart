@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'download.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:convert';
 
 class SubmergedView extends StatefulWidget {
   const SubmergedView({super.key});
@@ -14,7 +16,6 @@ class _SubmergedState extends State<SubmergedView> {
   String url = '';
   String data = '';
   String result = '0';
-  int _counter = 0;
   List<Widget> widgets = [];
   List<List<String>> commands = [];
   List<TextEditingController> controllers = [];
@@ -243,10 +244,56 @@ class _SubmergedState extends State<SubmergedView> {
           Row(
               mainAxisAlignment: MainAxisAlignment.center,
             children:[
+              ElevatedButton(
+                  onPressed: () async {
+                    var picked = await FilePicker.platform.pickFiles();
+                    String value = "";
+                    if (picked != null) {
+                      var bytes = picked.files.first.bytes;
+                      if (bytes != null){
+                         value = utf8.decode(bytes);
+                      }
+                    }
+                    setState(() {
+                      widgets.clear();
+                      commands.clear();
+                      controllers.clear();
+                    });
+                    for (String val in value.split("\n")){
+                      List<String> parts = val.split(":");
+                      setState(() {
+                        switch (parts[0]) {
+                          case "Forward":
+                            add_command(parts);
+                            break;
+                          case "Backward":
+                            add_command(parts);
+                            break;
+                          case "Right":
+                            add_command(parts);
+                            break;
+                          case "Left":
+                            add_command(parts);
+                            break;
+                          case "Up":
+                            add_command(parts);
+                            break;
+                          case "Down":
+                            add_command(parts);
+                            break;
+                          default:
+                            print('invalid command');
+                        }
+                      });
+                    }
+                  },
+                  child: const Text("Import commands")),
           ElevatedButton(
               onPressed: () {
                 setState(() {
                   widgets.clear();
+                  controllers.clear();
+                  commands.clear();
                 });
               },
               child: const Text("Clear command")),
@@ -272,7 +319,37 @@ class _SubmergedState extends State<SubmergedView> {
       ),
     );
   }
-
+  void add_command(List<String> parts){
+    TextEditingController _controller = TextEditingController(text: parts[1]);
+    widgets.add(Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+              flex: 1,
+              child: Container(
+                  margin: EdgeInsets.only(
+                      top: .0125 *
+                          MediaQuery.of(context).size.height),
+                  child: Text(
+                    parts[0],
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .apply(fontSizeFactor: 1),
+                  ))),
+          Expanded(
+              flex: 2,
+              child: Container(
+                  margin: EdgeInsets.only(
+                      right: .01 *
+                          MediaQuery.of(context).size.width),
+                  child: TextField(
+                    controller:_controller,
+                  )))
+        ]));
+    controllers.add(_controller);
+    commands.add([parts[0]]);
+  }
   static void download_file() {
     download('I am a test file'.codeUnits, 'test.txt');
   }

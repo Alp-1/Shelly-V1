@@ -38,24 +38,16 @@ class _LandState extends State<LandView>{
             url = 'http://robot.local:5000/land?query=forward';
             await send_Data(url);
           }
-          if (event.logicalKey.keyLabel == "A"){
+          else if (event.logicalKey.keyLabel == "A"){
             url = 'http://robot.local:5000/land?query=left';
             await send_Data(url);
           }
-          if (event.logicalKey.keyLabel == "S"){
+          else if (event.logicalKey.keyLabel == "S"){
             url = 'http://robot.local:5000/land?query=backward';
             await send_Data(url);
           }
-          if (event.logicalKey.keyLabel == "D"){
+          else if (event.logicalKey.keyLabel == "D"){
             url = 'http://robot.local:5000/land?query=right';
-            await send_Data(url);
-          }
-          if (event.logicalKey.keyLabel == "Q"){
-            url = 'http://robot.local:5000/land?query=anticlockwise';
-            await send_Data(url);
-          }
-          if (event.logicalKey.keyLabel == "E"){
-            url = 'http://robot.local:5000/land?query=clockwise';
             await send_Data(url);
           }
         }
@@ -76,41 +68,6 @@ class _LandState extends State<LandView>{
               Row (
                   mainAxisAlignment: MainAxisAlignment.center,
                   children:[
-                    Column(
-                      children: [
-                        GestureDetector(
-                          onTapDown:  (details) async {
-                            url = 'http://robot.local:5000/land?query=clockwise';
-                            await send_Data(url);
-                          },
-                          onTapUp: (details) async {
-                            url = 'http://robot.local:5000/land?query=stop';
-                            await send_Data(url);
-                          },
-                          child: const Icon(
-                            Icons.redo_outlined,
-                          ),
-                        ),
-
-                        Transform.rotate(
-                            angle: 180 * pi / 180,
-                            child:
-                            GestureDetector(
-                              onTapDown:  (details) async {
-                                url = 'http://robot.local:5000/land?query=anticlockwise';
-                                await send_Data(url);
-                              },
-                              onTapUp: (details) async {
-                                url = 'http://robot.local:5000/land?query=stop';
-                                await send_Data(url);
-                              },
-                              child: const Icon(
-                                Icons.undo_outlined,
-                              ),
-                            ),
-                        ),
-                      ]
-                    ),
                     Column(
                       children: [
                         GestureDetector(

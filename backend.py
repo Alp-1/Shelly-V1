@@ -60,12 +60,18 @@ def settings_func():
     # Record all video whilst underwater
     # Record log of events whilst underwater
     global mode
+    if 'exposure' in request.args:
+        print(request.args['exposure'])
+    if 'rightTrim' in request.args:
+            print(request.args['rightTrim'])
+    if 'leftTrim' in request.args:
+            print(request.args['leftTrim'])
     if mode != 3:
         mode = 3
     return str(mode)
 
 def inter():
-    app.run(host='michiels-macbook-pro.local', port=5000)
+    app.run(host='robot.local', port=5000)
 
 
 if __name__ == '__main__':
@@ -129,7 +135,7 @@ async def transmit(websocket, path):
         print("Client Disconnected !")
         cap.release()
 
-start_server = websockets.serve(transmit, host="michiels-macbook-pro.local", port=port)
+start_server = websockets.serve(transmit, host="robot.local", port=port)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

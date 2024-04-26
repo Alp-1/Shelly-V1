@@ -5,6 +5,7 @@ import asyncio
 import cv2, base64
 import threading
 import time
+from picamera2 import Picamera2
 
 class SizeError(Exception):
     ...
@@ -89,29 +90,36 @@ async def transmit(websocket, path):
     print("Client Connected !")
     try :
         # Code here would need to be change (takes webcam video feed instead of desired raspi camera feed)
-        cap = cv2.VideoCapture(0)
+        cam = Picamera2()
+        cam2_config = cam.create_video_configuration(main={"size": (640, 480), "format": "XRGB8888"})
+        cam.configure(cam2_config)
+        cam.start()
 
         c.acquire()
         print(size)
-        videoSize = [int(size[0]),int(size[1])]
+
+        videoSize = [int(size[0]), int(size[1])]
+
         if mode > 1:
             onPage = False
         else:
             onPage = True
+
         c.release()
+
         if videoSize[0] == 0 or videoSize[1] == 0:
             raise SizeError
-        while cap.isOpened() and onPage:
-            _, frame = cap.read()
+        
+        while onPage:
+            frame = cam.capture_array()
 
-            frame = cv2.resize(frame, (videoSize[0],videoSize[1]))
+            if frame is not None:
+                frame = cv2.resize(frame, (videoSize[0], videoSize[1]))
+                _, encoded = cv2.imencode('.jpg', frame)
+                data = str(base64.b64encode(encoded))
+                data = data[2:len(data)-1]
 
-            encoded = cv2.imencode('.jpg', frame)[1]
-
-            data = str(base64.b64encode(encoded))
-            data = data[2:len(data)-1]
-
-            await websocket.send(data)
+                await websocket.send(data)
 
             c.acquire()
             if mode > 1:
@@ -120,20 +128,16 @@ async def transmit(websocket, path):
                 onPage = True
             c.release()
 
-            #cv2.imshow("Transimission", frame)
-
-            #if cv2.waitKey(1) & 0xFF == ord('q'):
-            #    break
-        cap.release()
+        cam.stop()
     #except websockets.connection.ConnectionClosed as e:
 
     except SizeError:
         print("Image size not specified")
-        cap.release()
+        cam.stop()
 
     except:
         print("Client Disconnected !")
-        cap.release()
+        cam.stop()
 
 start_server = websockets.serve(transmit, host="robot.local", port=port)
 

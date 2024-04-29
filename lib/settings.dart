@@ -48,7 +48,6 @@ class _SettingsState extends State<Settings>{
                   setState(() {
                     _leftTrimming = double.parse(value);
                   });
-                  send_Data("http://robot.local:5000/settings?leftTrim="+_leftTrimming.toString());
                 },
                 ),
               ),
@@ -63,7 +62,6 @@ class _SettingsState extends State<Settings>{
                     setState(() {
                       _leftTrimming = value;
                     });
-                    send_Data("http://robot.local:5000/settings?leftTrim="+_leftTrimming.toString());
                   },
                 ),
               ),
@@ -83,7 +81,6 @@ class _SettingsState extends State<Settings>{
                     setState(() {
                       _rightTrimming = double.parse(value);
                     });
-                    send_Data("http://robot.local:5000/settings?rightTrim="+_rightTrimming.toString());
                   },
                 ),
               ),
@@ -98,7 +95,6 @@ class _SettingsState extends State<Settings>{
                     setState(() {
                       _rightTrimming = value;
                     });
-                    send_Data("http://robot.local:5000/settings?rightTrim="+_rightTrimming.toString());
                   },
                 ),
               ),
@@ -118,7 +114,6 @@ class _SettingsState extends State<Settings>{
                     setState(() {
                       _exposure = double.parse(value);
                     });
-                    send_Data("http://robot.local:5000/settings?exposure="+_exposure.toString());
                   },
                 ),
               ),
@@ -133,12 +128,21 @@ class _SettingsState extends State<Settings>{
                     setState(() {
                       _exposure = value;
                     });
-                    send_Data("http://robot.local:5000/settings?rightTrim="+_exposure.toString());
                   },
                 ),
               ),
             ],
-          )
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 100, 0, 0),
+            child: ElevatedButton(
+              child:Text("Save settings"),
+              onPressed: (){
+                send_Data("http://robot.local:5000/settings?rightTrim="+_exposure.toString()+"&leftTrim="+_leftTrimming.toString()+"&exposure="+_exposure.toString());
+              },
+            ),
+          ),
+
 
         ],
       ),

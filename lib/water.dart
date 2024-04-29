@@ -296,23 +296,27 @@ class _SubmergedState extends State<SubmergedView> {
                   commands.clear();
                 });
               },
-              child: const Text("Clear command")),
-          ElevatedButton(
-              onPressed: () {
-                String string = "http://robot.local:5000/water?commands=";
-                for (int index = 0; index < widgets.length; index++){
-                  commands[index].add(controllers[index].text);
-                  string += commands[index][0]+controllers[index].text;
-                  print(controllers[index].text);
-                }
-                send_Data(string);
-              },
-              child: const Text("Send command")),
-          ElevatedButton(
-              onPressed: () async {
-                download_file();
-              },
-              child: const Text("Download File")),
+              child: const Text("Clear commands")),
+            ]
+          ),
+          Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+            children:[
+              ElevatedButton(
+                onPressed: () {
+                  String string = "http://robot.local:5000/water?commands=";
+                  for (int index = 0; index < widgets.length; index++){
+                    commands[index].add(controllers[index].text);
+                    string += commands[index][0]+controllers[index].text;
+                  }
+                  send_Data(string);
+                },
+                child: const Text("Send commands")),
+            ElevatedButton(
+                onPressed: () async {
+                  download_file();
+                },
+                child: const Text("Download File")),
             ]
           )
         ],

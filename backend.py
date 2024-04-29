@@ -90,6 +90,11 @@ cam.configure(cam2_config)
 async def transmit(websocket, path):
     global size
     global mode
+
+    desired_fps = 5.0
+    frame_interval = 1.0 / desired_fps
+    jpeg_quality = 75 
+
     time.sleep(0.5)
     print("Client Connected !")
     
@@ -110,17 +115,24 @@ async def transmit(websocket, path):
         
         if videoSize[0] == 0 or videoSize[1] == 0:
             raise SizeError
+
+        next_frame_time = time.time()
         
         while onPage:
+            # if time.time() > next_frame_time:
             frame = cam.capture_array()
 
             if frame is not None:
                 frame = cv2.resize(frame, (videoSize[0], videoSize[1]))
-                _, encoded = cv2.imencode('.jpg', frame)
+                _, encoded = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), jpeg_quality])
                 data = str(base64.b64encode(encoded))
                 data = data[2:len(data)-1]
-
                 await websocket.send(data)
+            await asyncio.sleep(0.001)
+
+            #     next_frame_time += frame_interval
+            # else:
+            #     await asyncio.sleep(0.001)
 
             c.acquire()
             if mode > 1:

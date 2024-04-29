@@ -83,18 +83,19 @@ port = 5001
 
 print("Started server on port : ", port)
 
+cam = Picamera2()
+cam2_config = cam.create_video_configuration(main={"size": (320, 240), "format": "XRGB8888"},controls={'FrameRate': 5})
+cam.configure(cam2_config)
+
 async def transmit(websocket, path):
     global size
     global mode
     time.sleep(0.5)
     print("Client Connected !")
+    
+    cam.start()
+    
     try :
-        # Code here would need to be change (takes webcam video feed instead of desired raspi camera feed)
-        cam = Picamera2()
-        cam2_config = cam.create_video_configuration(main={"size": (640, 480), "format": "XRGB8888"})
-        cam.configure(cam2_config)
-        cam.start()
-
         c.acquire()
         print(size)
 
@@ -106,7 +107,7 @@ async def transmit(websocket, path):
             onPage = True
 
         c.release()
-
+        
         if videoSize[0] == 0 or videoSize[1] == 0:
             raise SizeError
         

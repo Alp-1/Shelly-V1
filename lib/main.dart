@@ -57,7 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
             isScrollable: false,
             onTap: (index){
               if(previous != index && index == 0){
-                get_Data('http://'+ip+':'+port+'/land?size='+(0.75 * MediaQuery.of(context).size.width).round().toString()+','+(0.75 * MediaQuery.of(context).size.height).round().toString());
+                var length = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height ? MediaQuery.of(context).size.height : MediaQuery.of(context).size.width;
+                get_Data('http://'+ip+':'+port+'/land?size='+(0.75 * length).round().toString()+','+(0.75 * length).round().toString());
               }
               else if (previous != index && index == 1){
                 get_Data('http://'+ip+':'+port+'/water');

@@ -28,6 +28,7 @@ class _LandState extends State<LandView>{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    var length = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height ? MediaQuery.of(context).size.height : MediaQuery.of(context).size.width;
     return KeyboardListener(
       autofocus: true,
       focusNode: FocusNode(),
@@ -61,8 +62,8 @@ class _LandState extends State<LandView>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(
-                width: .75 * MediaQuery.of(context).size.width,
-                height: .75  * MediaQuery.of(context).size.height,
+                width: .6 * length,
+                height: .6  * length,
                 child: vs,
               ),
               Row (
@@ -79,8 +80,14 @@ class _LandState extends State<LandView>{
                             url = 'http://robot.local:5000/land?query=stop';
                             await send_Data(url);
                           },
-                          child: const Icon(
-                            Icons.keyboard_arrow_up_outlined,
+                          child: ElevatedButton(
+                            onPressed: (){},
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.all(length*0.01),
+                            ),
+                            child: const Icon(
+                              Icons.keyboard_arrow_up_outlined,
+                            ),
                           ),
                         ),
                         Row(
@@ -95,8 +102,17 @@ class _LandState extends State<LandView>{
                                   url = 'http://robot.local:5000/land?query=stop';
                                   await send_Data(url);
                                 },
-                                child: const Icon(
-                                  Icons.keyboard_arrow_left_outlined,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: ElevatedButton(
+                                    onPressed: (){},
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.all(length*0.01),
+                                    ),
+                                    child: const Icon(
+                                      Icons.keyboard_arrow_left_outlined,
+                                    ),
+                                  ),
                                 ),
                               ),
                               GestureDetector(
@@ -108,8 +124,17 @@ class _LandState extends State<LandView>{
                                   url = 'http://robot.local:5000/land?query=stop';
                                   await send_Data(url);
                                 },
-                                child: const Icon(
-                                  Icons.keyboard_arrow_right_outlined,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: ElevatedButton(
+                                    onPressed: (){},
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.all(length*0.01),
+                                    ),
+                                    child: const Icon(
+                                      Icons.keyboard_arrow_right_outlined,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ]
@@ -123,8 +148,14 @@ class _LandState extends State<LandView>{
                             url = 'http://robot.local:5000/land?query=stop';
                             await send_Data(url);
                           },
-                          child: const Icon(
-                            Icons.keyboard_arrow_down_outlined,
+                          child: ElevatedButton(
+                            onPressed: (){},
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.all(length*0.01),
+                            ),
+                            child: const Icon(
+                              Icons.keyboard_arrow_down_outlined,
+                            ),
                           ),
                         ),
                       ]

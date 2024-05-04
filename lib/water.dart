@@ -31,6 +31,10 @@ class _SubmergedState extends State<SubmergedView> {
 
   @override
   Widget build(BuildContext context) {
+    var length =
+        MediaQuery.of(context).size.width > MediaQuery.of(context).size.height
+            ? MediaQuery.of(context).size.height
+            : MediaQuery.of(context).size.width;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -42,7 +46,8 @@ class _SubmergedState extends State<SubmergedView> {
                 onAcceptWithDetails: (details) {
                   var txt = TextEditingController();
                   setState(() {
-                    TextEditingController _controller = TextEditingController(text: '0');
+                    TextEditingController _controller =
+                        TextEditingController(text: '0');
                     widgets.add(Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
@@ -50,9 +55,7 @@ class _SubmergedState extends State<SubmergedView> {
                           Expanded(
                               flex: 1,
                               child: Container(
-                                  margin: EdgeInsets.only(
-                                      top: .0125 *
-                                          MediaQuery.of(context).size.height),
+                                  margin: EdgeInsets.only(top: .0125 * length),
                                   child: Text(
                                     details.data,
                                     style: DefaultTextStyle.of(context)
@@ -62,11 +65,9 @@ class _SubmergedState extends State<SubmergedView> {
                           Expanded(
                               flex: 2,
                               child: Container(
-                                  margin: EdgeInsets.only(
-                                      right: .01 *
-                                          MediaQuery.of(context).size.width),
+                                  margin: EdgeInsets.only(right: .01 * length),
                                   child: TextField(
-                                    controller:_controller,
+                                    controller: _controller,
                                   )))
                         ]));
                     controllers.add(_controller);
@@ -80,11 +81,10 @@ class _SubmergedState extends State<SubmergedView> {
                   List<dynamic> rejected,
                 ) {
                   return Container(
-                      width: .6 * MediaQuery.of(context).size.width,
-                      height: .6 * MediaQuery.of(context).size.height,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey)
-                      ),
+                      width: .6 * length,
+                      height: .6 * length,
+                      decoration:
+                          BoxDecoration(border: Border.all(color: Colors.grey)),
                       child: ListView(
                         children: List.generate(
                             widgets.length,
@@ -98,139 +98,172 @@ class _SubmergedState extends State<SubmergedView> {
                       ));
                 },
               ),
-
               Container(
-                margin: EdgeInsets.only(
-                    left: .05 *
-                        MediaQuery.of(context).size.width),
-                padding: EdgeInsets.only(left:.02 * MediaQuery.of(context).size.width, right:.02 * MediaQuery.of(context).size.width),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey)
-                ),
-                height: .6 * MediaQuery.of(context).size.height,
-                width: .2 * MediaQuery.of(context).size.width,
+                margin: EdgeInsets.only(left: .05 * length),
+                padding:
+                    EdgeInsets.only(left: .02 * length, right: .02 * length),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.grey)),
+                height: .6 * length,
+                width: .2 * length,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
-                        child: Draggable<String>(
+                      margin: EdgeInsets.only(top: .01 * length),
+                      child: Draggable<String>(
                         feedback: Text(
-                            'Forward',
-                            style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
-
+                          'Forward',
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.center,
                         ),
-                        child: Text('Forward',
-                            style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
+                        child: Text(
+                          'Forward',
+                          style: TextStyle(fontSize: .03 * length),
+                          textAlign: TextAlign.center,
                         ),
                         data: 'Forward',
                         onDraggableCanceled: (velocity, offset) {},
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
+                      margin: EdgeInsets.only(top: .01 * length),
                       child: Draggable<String>(
                         feedback: Text(
                           'Backward',
-                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
-
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.center,
                         ),
-                        child: Text('Backward',
-                          style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
+                        child: Text(
+                          'Backward',
+                          style: TextStyle(fontSize: .03 * length),
+                          textAlign: TextAlign.center,
                         ),
                         data: 'Backward',
                         onDraggableCanceled: (velocity, offset) {},
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
+                      margin: EdgeInsets.only(top: .01 * length),
                       child: Draggable<String>(
                         feedback: Text(
                           'Left',
-                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
-
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.center,
                         ),
-                        child: Text('Left',
-                          style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
+                        child: Text(
+                          'Left',
+                          style: TextStyle(fontSize: .03 * length),
+                          textAlign: TextAlign.center,
                         ),
                         data: 'Left',
                         onDraggableCanceled: (velocity, offset) {},
                       ),
                     ),
-
                     Container(
-                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
+                      margin: EdgeInsets.only(top: .01 * length),
                       child: Draggable<String>(
                         feedback: Text(
                           'Right',
-                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
-
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.center,
                         ),
-                        child: Text('Right',
-                          style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
+                        child: Text(
+                          'Right',
+                          style: TextStyle(fontSize: .03 * length),
+                          textAlign: TextAlign.center,
                         ),
                         data: 'Right',
                         onDraggableCanceled: (velocity, offset) {},
                       ),
                     ),
-
                     Container(
-                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
+                      margin: EdgeInsets.only(top: .01 * length),
                       child: Draggable<String>(
                         feedback: Text(
                           'Up',
-                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
-
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.center,
                         ),
-                        child: Text('Up',
-                          style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
+                        child: Text(
+                          'Up',
+                          style: TextStyle(fontSize: .03 * length),
+                          textAlign: TextAlign.center,
                         ),
                         data: 'Up',
                         onDraggableCanceled: (velocity, offset) {},
                       ),
                     ),
-
                     Container(
-                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
+                      margin: EdgeInsets.only(top: .01 * length),
                       child: Draggable<String>(
                         feedback: Text(
                           'Down',
-                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
-
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.center,
                         ),
-                        child: Text('Down',
-                          style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
+                        child: Text(
+                          'Down',
+                          style: TextStyle(fontSize: .03 * length),
+                          textAlign: TextAlign.center,
                         ),
                         data: 'Down',
                         onDraggableCanceled: (velocity, offset) {},
                       ),
                     ),
-
                     Container(
-                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
+                      margin: EdgeInsets.only(top: .01 * length),
                       child: Draggable<String>(
                         feedback: Text(
                           'Start record',
-                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
-
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.center,
                         ),
-                        child: Text('Start record',
-                          style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
+                        child: Text(
+                          'Start record',
+                          style: TextStyle(fontSize: .03 * length),
+                          textAlign: TextAlign.center,
                         ),
                         data: 'Start record',
                         onDraggableCanceled: (velocity, offset) {},
                       ),
                     ),
-
                     Container(
-                      margin: EdgeInsets.only(top:.01 * MediaQuery.of(context).size.width),
+                      margin: EdgeInsets.only(top: .01 * length),
                       child: Draggable<String>(
                         feedback: Text(
                           'Stop record',
-                          style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
-
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.center,
                         ),
-                        child: Text('Stop record',
-                          style: TextStyle(fontSize: .02 * MediaQuery.of(context).size.width),
+                        child: Text(
+                          'Stop record',
+                          style: TextStyle(fontSize: .03 * length),
+                          textAlign: TextAlign.center,
                         ),
                         data: 'Stop record',
                         onDraggableCanceled: (velocity, offset) {},
@@ -241,17 +274,17 @@ class _SubmergedState extends State<SubmergedView> {
               ),
             ],
           ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-            children:[
-              ElevatedButton(
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10,5,10,5),
+              child: ElevatedButton(
                   onPressed: () async {
                     var picked = await FilePicker.platform.pickFiles();
                     String value = "";
                     if (picked != null) {
                       var bytes = picked.files.first.bytes;
-                      if (bytes != null){
-                         value = utf8.decode(bytes);
+                      if (bytes != null) {
+                        value = utf8.decode(bytes);
                       }
                     }
                     setState(() {
@@ -259,7 +292,7 @@ class _SubmergedState extends State<SubmergedView> {
                       commands.clear();
                       controllers.clear();
                     });
-                    for (String val in value.split("\n")){
+                    for (String val in value.split("\n")) {
                       List<String> parts = val.split(":");
                       setState(() {
                         switch (parts[0]) {
@@ -288,7 +321,8 @@ class _SubmergedState extends State<SubmergedView> {
                     }
                   },
                   child: const Text("Import commands")),
-          ElevatedButton(
+            ),
+            ElevatedButton(
               onPressed: () {
                 setState(() {
                   widgets.clear();
@@ -296,34 +330,35 @@ class _SubmergedState extends State<SubmergedView> {
                   commands.clear();
                 });
               },
-              child: const Text("Clear commands")),
-            ]
-          ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-            children:[
-              ElevatedButton(
+              child: const Text("Clear commands"),
+            ),
+          ]),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            ElevatedButton(
                 onPressed: () {
                   String string = "http://robot.local:5000/water?commands=";
-                  for (int index = 0; index < widgets.length; index++){
+                  for (int index = 0; index < widgets.length; index++) {
                     commands[index].add(controllers[index].text);
-                    string += commands[index][0]+controllers[index].text;
+                    string += commands[index][0] + controllers[index].text;
                   }
                   send_Data(string);
                 },
                 child: const Text("Send commands")),
-            ElevatedButton(
-                onPressed: () async {
-                  download_file();
-                },
-                child: const Text("Download File")),
-            ]
-          )
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10,5,10,5),
+              child: ElevatedButton(
+                  onPressed: () async {
+                    download_file();
+                  },
+                  child: const Text("Download File")),
+            ),
+          ])
         ],
       ),
     );
   }
-  void add_command(List<String> parts){
+
+  void add_command(List<String> parts) {
     TextEditingController _controller = TextEditingController(text: parts[1]);
     widgets.add(Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -333,8 +368,7 @@ class _SubmergedState extends State<SubmergedView> {
               flex: 1,
               child: Container(
                   margin: EdgeInsets.only(
-                      top: .0125 *
-                          MediaQuery.of(context).size.height),
+                      top: .0125 * MediaQuery.of(context).size.height),
                   child: Text(
                     parts[0],
                     style: DefaultTextStyle.of(context)
@@ -345,15 +379,15 @@ class _SubmergedState extends State<SubmergedView> {
               flex: 2,
               child: Container(
                   margin: EdgeInsets.only(
-                      right: .01 *
-                          MediaQuery.of(context).size.width),
+                      right: .01 * MediaQuery.of(context).size.width),
                   child: TextField(
-                    controller:_controller,
+                    controller: _controller,
                   )))
         ]));
     controllers.add(_controller);
     commands.add([parts[0]]);
   }
+
   static void download_file() {
     download('I am a test file'.codeUnits, 'test.txt');
   }

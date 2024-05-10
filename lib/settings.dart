@@ -15,10 +15,16 @@ class _SettingsState extends State<Settings>{
   String result = '0';
   double _leftTrimming = 20;
   double _rightTrimming = 20;
-  double _exposure = 20;
+  double _exposure = 0;
+  double _speed = 1;
+  double _quality = 10;
+  double _brightness = 0;
   TextEditingController _leftTrimController = TextEditingController();
   TextEditingController _rightTrimController = TextEditingController();
   TextEditingController _exposureController = TextEditingController();
+  TextEditingController _speedController = TextEditingController();
+  TextEditingController _qualityController = TextEditingController();
+  TextEditingController _brightnessController = TextEditingController();
 
 
   Future<void> send_Data(String url) async {
@@ -31,6 +37,9 @@ class _SettingsState extends State<Settings>{
     _leftTrimController = TextEditingController(text:((_leftTrimming*100).round()/100).toString());
     _rightTrimController = TextEditingController(text:((_rightTrimming*100).round()/100).toString());
     _exposureController = TextEditingController(text:((_exposure*100).round()/100).toString());
+    _brightnessController = TextEditingController(text:((_brightness*100).round()/100).toString());
+    _qualityController = TextEditingController(text:_quality.toString());
+    _speedController = TextEditingController(text:_speed.toString());
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -121,12 +130,113 @@ class _SettingsState extends State<Settings>{
                 flex: 3,
                 child: Slider(
                   value: _exposure,
-                  max: 360,
-                  divisions: 3600,
+                  max: 8,
+                  min:-8,
+                  divisions: 1600,
                   label: ((_exposure*100).round()/100).toString(),
                   onChanged: (double value) {
                     setState(() {
                       _exposure = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                flex:1,
+                child: Text("Brightness"),
+              ),
+              Expanded(
+                flex: 1,
+                child: TextField(
+                  controller: _brightnessController,
+                  onSubmitted: (value) {
+                    setState(() {
+                      _brightness = double.parse(value);
+                    });
+                  },
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Slider(
+                  value: _brightness,
+                  max: 1,
+                  min: -1,
+                  divisions: 200,
+                  label: ((_brightness*100).round()/100).toString(),
+                  onChanged: (double value) {
+                    setState(() {
+                      _brightness = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                flex:1,
+                child: Text("Quality"),
+              ),
+              Expanded(
+                flex: 1,
+                child: TextField(
+                  controller: _qualityController,
+                  onSubmitted: (value) {
+                    setState(() {
+                      _quality = double.parse(value);
+                    });
+                  },
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Slider(
+                  value: _quality,
+                  max: 100,
+                  divisions: 100,
+                  label: _quality.toString(),
+                  onChanged: (double value) {
+                    setState(() {
+                      _quality = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                flex:1,
+                child: Text("Speed"),
+              ),
+              Expanded(
+                flex: 1,
+                child: TextField(
+                  controller: _speedController,
+                  onSubmitted: (value) {
+                    setState(() {
+                      _speed = double.parse(value);
+                    });
+                  },
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Slider(
+                  value: _speed,
+                  max: 3,
+                  divisions: 200,
+                  label: _speed.toString(),
+                  onChanged: (double value) {
+                    setState(() {
+                      _speed = value;
                     });
                   },
                 ),
@@ -138,7 +248,7 @@ class _SettingsState extends State<Settings>{
             child: ElevatedButton(
               child:Text("Save settings"),
               onPressed: (){
-                send_Data("http://robot.local:5000/settings?rightTrim="+_exposure.toString()+"&leftTrim="+_leftTrimming.toString()+"&exposure="+_exposure.toString());
+                send_Data("http://robot.local:5000/settings?rightTrim="+_exposure.toString()+"&leftTrim="+_leftTrimming.toString()+"&exposure="+_exposure.toString()+"&brightness="+_brightness.toString()+"&quality="+_quality.toString()+"&speed="+_speed.toString());
               },
             ),
           ),

@@ -232,7 +232,7 @@ class _SettingsState extends State<Settings>{
                 child: Slider(
                   value: _speed,
                   max: 3,
-                  divisions: 200,
+                  divisions: 3,
                   label: _speed.toString(),
                   onChanged: (double value) {
                     setState(() {

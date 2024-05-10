@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onTap: (index){
               if(previous != index && index == 0){
                 var length = MediaQuery.of(context).size.width > MediaQuery.of(context).size.height ? MediaQuery.of(context).size.height : MediaQuery.of(context).size.width;
-                //get_Data('http://'+ip+':'+port+'/land?size='+(0.75 * length).round().toString()+','+(0.75 * length).round().toString());
+                get_Data('http://'+ip+':'+port+'/land?size='+(0.75 * length).round().toString()+','+(0.75 * length).round().toString());
               }
               else if (previous != index && index == 1){
                 get_Data('http://'+ip+':'+port+'/water');
@@ -87,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             lv,
             SubmergedView(),

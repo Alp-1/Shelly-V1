@@ -81,7 +81,10 @@ class _LandState extends State<LandView>{
                             await send_Data(url);
                           },
                           child: ElevatedButton(
-                            onPressed: (){},
+                            onPressed: () async {
+                              url = 'http://robot.local:5000/land?query=stop';
+                              await send_Data(url);
+                            },
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.all(length*0.01),
                             ),
@@ -105,7 +108,10 @@ class _LandState extends State<LandView>{
                                 child: Padding(
                                   padding: const EdgeInsets.all(5),
                                   child: ElevatedButton(
-                                    onPressed: (){},
+                                    onPressed: () async {
+                                      url = 'http://robot.local:5000/land?query=stop';
+                                      await send_Data(url);
+                                    },
                                     style: ElevatedButton.styleFrom(
                                       padding: EdgeInsets.all(length*0.01),
                                     ),
@@ -127,7 +133,10 @@ class _LandState extends State<LandView>{
                                 child: Padding(
                                   padding: const EdgeInsets.all(5),
                                   child: ElevatedButton(
-                                    onPressed: (){},
+                                    onPressed: () async {
+                                      url = 'http://robot.local:5000/land?query=stop';
+                                      await send_Data(url);
+                                    },
                                     style: ElevatedButton.styleFrom(
                                       padding: EdgeInsets.all(length*0.01),
                                     ),
@@ -149,7 +158,10 @@ class _LandState extends State<LandView>{
                             await send_Data(url);
                           },
                           child: ElevatedButton(
-                            onPressed: (){},
+                            onPressed: () async {
+                              url = 'http://robot.local:5000/land?query=stop';
+                              await send_Data(url);
+                              },
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.all(length*0.01),
                             ),

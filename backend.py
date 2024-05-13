@@ -36,17 +36,30 @@ previous = ""
 app = Flask(__name__)
 CORS(app)
 
+cam = Picamera2()
+cam2_config = cam.create_video_configuration(main={"size": (320, 240), "format": "XRGB8888"},controls={'FrameRate': 5})
+cam.configure(cam2_config)
+
 @app.route('/water', methods = ['GET'])
 def water_func():
     # Once command generation is complete, go through and apply each command in series
     # Record all video whilst underwater
     # Record log of events whilst underwater
     global mode
-    print(mode)
+
+
     if mode != 2:
         mode = 2
         robotController.mode=2
-    print(mode)
+    
+    if 'commands' in request.args:
+        array = request.args['commands'].split(',')
+        newArr = []
+        for x in range(0,len(array)/2):
+            newArr.append(array[x*2],array[x*2+1])
+        
+        robotController.start_mission(newArr)
+
     return str(mode)
 
 @app.route('/land', methods = ['GET'])
@@ -104,19 +117,18 @@ def settings_func():
     if 'exposure' in request.args:
         print(request.args['exposure'])
     if 'rightTrim' in request.args:
-        print(request.args['rightTrim'])
+        robotController.rightTrim = float(request.args['rightTrim'])
     if 'leftTrim' in request.args:
-        print(request.args['leftTrim'])
+        robotController.leftTrim = float(request.args['leftTrim'])
     if 'speed' in request.args:
         robotController.speed_mode = int(request.args['speed'])
     if 'brightness' in request.args:
         print(request.args['brightness'])
     if 'quality' in request.args:
-        print(request.args['quality'])
+        request.args['quality']
     if mode != 3:
         mode = 3
         robotController.mode=3
-    print(mode)
     return str(mode)
 
     
@@ -124,9 +136,6 @@ def inter():
     Process(app.run(host='robot.local', port=5000))
     
 
-cam = Picamera2()
-cam2_config = cam.create_video_configuration(main={"size": (320, 240), "format": "XRGB8888"},controls={'FrameRate': 5})
-cam.configure(cam2_config)    
 
 async def transmit(websocket,path):
     global size
@@ -140,12 +149,10 @@ async def transmit(websocket,path):
     time.sleep(0.5)
     print("Client Connected !")
     
-    print(size)
     cam.start()
     time.sleep(2)
     
     try :
-        print(size)
         videoSize = [size, size]
 
         if mode > 1:
@@ -180,7 +187,6 @@ async def transmit(websocket,path):
                 onPage = True
 
         cam.stop()
-    #except websockets.connection.ConnectionClosed as e:
 
     except SizeError:
         print("Image size not specified")

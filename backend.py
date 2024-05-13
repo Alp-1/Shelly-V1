@@ -36,17 +36,31 @@ previous = ""
 app = Flask(__name__)
 CORS(app)
 
+cam = Picamera2()
+cam2_config = cam.create_video_configuration(main={"size": (320, 240), "format": "XRGB8888"},controls={'FrameRate': 5})
+cam.configure(cam2_config)
+global jpeg_quality
+
 @app.route('/water', methods = ['GET'])
 def water_func():
     # Once command generation is complete, go through and apply each command in series
     # Record all video whilst underwater
     # Record log of events whilst underwater
     global mode
-    print(mode)
+
+
     if mode != 2:
         mode = 2
         robotController.mode=2
-    print(mode)
+    
+    if 'commands' in request.args:
+        array = request.args['commands'].split(',')
+        newArr = []
+        for x in range(0,len(array)/2):
+            newArr.append(array[x*2],array[x*2+1])
+        
+        robotController.start_mission(newArr)
+
     return str(mode)
 
 @app.route('/land', methods = ['GET'])
@@ -101,22 +115,25 @@ def settings_func():
     # Record log of events whilst underwater
     global mode
     global robotController
+    global jpeg_quality
     if 'exposure' in request.args:
         print(request.args['exposure'])
+        cam.controls['ExposureValue'] = int(request.args['exposure'])
     if 'rightTrim' in request.args:
-        print(request.args['rightTrim'])
+        robotController.rightTrim = float(request.args['rightTrim'])
     if 'leftTrim' in request.args:
-        print(request.args['leftTrim'])
+        robotController.leftTrim = float(request.args['leftTrim'])
     if 'speed' in request.args:
         robotController.speed_mode = int(request.args['speed'])
     if 'brightness' in request.args:
         print(request.args['brightness'])
+        cam.controls['Brightness'] = float(request.args['brightness'])
     if 'quality' in request.args:
-        print(request.args['quality'])
+        jpeg_quality = int(request.args['quality'])
+        request.args['quality']
     if mode != 3:
         mode = 3
         robotController.mode=3
-    print(mode)
     return str(mode)
 
     
@@ -124,28 +141,22 @@ def inter():
     Process(app.run(host='robot.local', port=5000))
     
 
-cam = Picamera2()
-cam2_config = cam.create_video_configuration(main={"size": (320, 240), "format": "XRGB8888"},controls={'FrameRate': 5})
-cam.configure(cam2_config)    
 
 async def transmit(websocket,path):
     global size
     global mode
     global stop
     global cam
-    desired_fps = 5.0
-    frame_interval = 1.0 / desired_fps
+    global jpeg_quality
     jpeg_quality = 75 
 
     time.sleep(0.5)
     print("Client Connected !")
     
-    print(size)
     cam.start()
     time.sleep(2)
     
     try :
-        print(size)
         videoSize = [size, size]
 
         if mode > 1:
@@ -155,11 +166,8 @@ async def transmit(websocket,path):
         
         if videoSize[0] == 0 or videoSize[1] == 0:
             raise SizeError
-
-        next_frame_time = time.time()
         
         while onPage and not stop:
-            # if time.time() > next_frame_time:
             frame = cam.capture_array()
 
             if frame is not None:
@@ -170,17 +178,12 @@ async def transmit(websocket,path):
                 await websocket.send(data)
             await asyncio.sleep(0.001)
 
-            #     next_frame_time += frame_interval
-            # else:
-            #     await asyncio.sleep(0.001)
-
             if mode > 1:
                 onPage = False
             else:
                 onPage = True
 
         cam.stop()
-    #except websockets.connection.ConnectionClosed as e:
 
     except SizeError:
         print("Image size not specified")

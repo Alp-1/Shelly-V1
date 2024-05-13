@@ -3,28 +3,38 @@ from flask_cors import CORS
 import websockets
 import asyncio
 import cv2, base64
-import threading
+from threading import *
 import time
 from picamera2 import Picamera2
+from control1 import Controller
+import pigpio
+import subprocess
+from multiprocessing import Process, Value
+import sys
+import RPi.GPIO as GPIO
+from functools import partial
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(25,GPIO.IN, pull_up_down = GPIO.PUD_UP)
+
+def checkSwitch():
+    while True:
+        if GPIO.input(25) == 0:
+            break
+    subprocess.call(['sh','./script.sh'])
+    sys.exit("Resetting")
+    
+pi = pigpio.pi()
 
 class SizeError(Exception):
     ...
     pass
 
+mode = 2
+size = 0
+stop=False
+previous = ""
 app = Flask(__name__)
 CORS(app)
-
-mode = 0
-
-c = threading.Condition()
-size = [0,0]
-
-
-@app.route('/test', methods = ['GET'])
-def test_func():
-    d = {}
-    d['output'] = request.args['query']
-    return d
 
 @app.route('/water', methods = ['GET'])
 def water_func():
@@ -32,27 +42,56 @@ def water_func():
     # Record all video whilst underwater
     # Record log of events whilst underwater
     global mode
+    print(mode)
     if mode != 2:
         mode = 2
+        robotController.mode=2
+    print(mode)
     return str(mode)
 
 @app.route('/land', methods = ['GET'])
 def land_func():
     # Get video stream frames and send data over network - maybe use websocket communication
     # Receive control commands from flutter and apply them appropriately
-    global size
     global mode
-    if 'size' in request.args:
-        c.acquire()
-        size = request.args['size'].split(',')
-        c.release()
-
-    if 'query' in request.args:
-        if request.args['query'] == "forward":
-            print("forward")
-
+    global robotController
+    global size
     if mode != 1:
         mode = 1
+        robotController.mode=1
+    
+    if 'size' in request.args:
+        size = int(request.args['size'].split(',')[0])
+
+    if 'query' in request.args:
+        print(request.args['query'])
+        if request.args['query'] == "forward":
+            robotController.start = True
+            robotController.flag_stop = False
+            robotController.flag_forward = True
+            
+        elif request.args['query'] == "backward":
+            robotController.start = True
+            robotController.flag_stop = False
+            robotController.flag_back = True
+            
+        elif request.args['query'] == "left":
+            robotController.start = True
+            robotController.flag_stop = False
+            robotController.flag_left = True
+            
+        elif request.args['query'] == "right":
+            robotController.start = True
+            robotController.flag_stop = False
+            robotController.flag_right = True
+        
+        elif request.args['query'] == "stop":
+            robotController.flag_stop = True
+            robotController.flag_forward = False
+            robotController.flag_back = False
+            robotController.flag_left = False
+            robotController.flag_right = False
+            
     return str(mode)
 
 @app.route('/settings', methods = ['GET'])
@@ -61,36 +100,39 @@ def settings_func():
     # Record all video whilst underwater
     # Record log of events whilst underwater
     global mode
+    global robotController
     if 'exposure' in request.args:
         print(request.args['exposure'])
     if 'rightTrim' in request.args:
-            print(request.args['rightTrim'])
+        print(request.args['rightTrim'])
     if 'leftTrim' in request.args:
-            print(request.args['leftTrim'])
+        print(request.args['leftTrim'])
+    if 'speed' in request.args:
+        robotController.speed_mode = int(request.args['speed'])
+    if 'brightness' in request.args:
+        print(request.args['brightness'])
+    if 'quality' in request.args:
+        print(request.args['quality'])
     if mode != 3:
         mode = 3
+        robotController.mode=3
+    print(mode)
     return str(mode)
 
+    
 def inter():
-    app.run(host='robot.local', port=5000)
-
-
-if __name__ == '__main__':
-    t1 = threading.Thread(target=inter, name="t1", args=())
-    t1.start()
-
-port = 5001
-
-print("Started server on port : ", port)
+    Process(app.run(host='robot.local', port=5000))
+    
 
 cam = Picamera2()
 cam2_config = cam.create_video_configuration(main={"size": (320, 240), "format": "XRGB8888"},controls={'FrameRate': 5})
-cam.configure(cam2_config)
+cam.configure(cam2_config)    
 
-async def transmit(websocket, path):
+async def transmit(websocket,path):
     global size
     global mode
-
+    global stop
+    global cam
     desired_fps = 5.0
     frame_interval = 1.0 / desired_fps
     jpeg_quality = 75 
@@ -98,27 +140,25 @@ async def transmit(websocket, path):
     time.sleep(0.5)
     print("Client Connected !")
     
+    print(size)
     cam.start()
+    time.sleep(2)
     
     try :
-        c.acquire()
         print(size)
-
-        videoSize = [int(size[0]), int(size[1])]
+        videoSize = [size, size]
 
         if mode > 1:
             onPage = False
         else:
             onPage = True
-
-        c.release()
         
         if videoSize[0] == 0 or videoSize[1] == 0:
             raise SizeError
 
         next_frame_time = time.time()
         
-        while onPage:
+        while onPage and not stop:
             # if time.time() > next_frame_time:
             frame = cam.capture_array()
 
@@ -134,12 +174,10 @@ async def transmit(websocket, path):
             # else:
             #     await asyncio.sleep(0.001)
 
-            c.acquire()
             if mode > 1:
                 onPage = False
             else:
                 onPage = True
-            c.release()
 
         cam.stop()
     #except websockets.connection.ConnectionClosed as e:
@@ -152,7 +190,27 @@ async def transmit(websocket, path):
         print("Client Disconnected !")
         cam.stop()
 
-start_server = websockets.serve(transmit, host="robot.local", port=port)
+def liveFeed():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    start_server = websockets.serve(transmit, host="robot.local", port=5001)
+    loop.run_until_complete(start_server)
+    loop.run_forever()
 
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+port = 5001
+
+robotController = Controller()
+t1 = Thread(target=inter)
+t1.daemon = True
+t1.start()
+liveFeed()
+#t3 = Thread(target=checkSwitch())
+#t3.daemon = True
+#t3.start()
+        
+
+
+
+
+
+

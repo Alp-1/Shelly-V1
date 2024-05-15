@@ -18,6 +18,7 @@ GPIO.setup(25,GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 def checkSwitch():
     while True:
+        time.sleep(1)
         if GPIO.input(25) == 0:
             break
     subprocess.call(['sh','./script.sh'])

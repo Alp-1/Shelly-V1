@@ -11,6 +11,10 @@ import serial
 from multiprocessing import Process
 c1 = threading.Condition()
 
+pid_forward_flop= PID(0.2,0,0, 0)
+pid_forward_flop.sample_time = 0.00000001
+pid_forward_flop.output_limits = (-300,300)
+
 #serial initialisation
 ser = serial.Serial(
 	port='/dev/ttyACM1',
@@ -60,7 +64,9 @@ def get_encoder_data():
     global angvel1,rpm1,angle1,angvel2,rpm2,angle2
     try:
         while True:
+
             line = ser1.readline().decode().strip()  # Read a line from the Pico
+            #print("test")
             if line:
                 parts = line.split()
                 if len(parts) == 4:
@@ -96,23 +102,31 @@ def controlLoop():
 	global rpm2
 	global angle2
 	i=0
-	angsetpoint1 = 60
+	angsetpoint1 = 69
 	angsetpoint2 = 60
+	movement_functions_ground.initialise_neutral_point(left_motor_pin,right_motor_pin)   
+	
 	while True:
 		if speed_mode == 1:
 			#print(self.flag_forward,self.flag_stop,self.flag_back,self.flag_left,self.flag_right)
 			if flag_forward == True :
-				 
-				 #movement_functions_ground.set_heading(global_heading) 
-				 movement_functions.forward(left_motor_pin,right_motor_pin,angle1,angle2,angsetpoint1,angsetpoint2)
-			else:    
-				 movement_functions_ground.stop_motion(left_motor_pin,right_motor_pin)
+			  print("test1")
+
+			  if i <= 50:
+			      angsetpoint1 = 69
+			  elif i>50:
+			      angsetpoint1 = 69
+			      print("second")  
+			  
+			  movement_functions.forward(left_motor_pin,right_motor_pin,angle1,angle2,angsetpoint1)
+			  i =+ 1
+	
 	       
 
 	#get_angular_velocity()
-t1 = Process(target=get_encoder_data())
+t1 = threading.Thread(target=get_encoder_data)
 t1.start()
-t2 = Process(target=controlLoop())
+t2 = threading.Thread(target=controlLoop)
 t2.start()
 	#t3 = Process(target=get_heading)
 	#t3.start()

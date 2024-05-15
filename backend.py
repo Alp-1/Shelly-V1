@@ -40,6 +40,7 @@ CORS(app)
 cam = Picamera2()
 cam2_config = cam.create_video_configuration(main={"size": (320, 240), "format": "XRGB8888"},controls={'FrameRate': 5})
 cam.configure(cam2_config)
+global jpeg_quality
 
 @app.route('/water', methods = ['GET'])
 def water_func():
@@ -115,8 +116,10 @@ def settings_func():
     # Record log of events whilst underwater
     global mode
     global robotController
+    global jpeg_quality
     if 'exposure' in request.args:
         print(request.args['exposure'])
+        cam.controls['ExposureValue'] = int(request.args['exposure'])
     if 'rightTrim' in request.args:
         robotController.rightTrim = float(request.args['rightTrim'])
     if 'leftTrim' in request.args:
@@ -125,7 +128,9 @@ def settings_func():
         robotController.speed_mode = int(request.args['speed'])
     if 'brightness' in request.args:
         print(request.args['brightness'])
+        cam.controls['Brightness'] = float(request.args['brightness'])
     if 'quality' in request.args:
+        jpeg_quality = int(request.args['quality'])
         request.args['quality']
     if mode != 3:
         mode = 3
@@ -143,8 +148,7 @@ async def transmit(websocket,path):
     global mode
     global stop
     global cam
-    desired_fps = 5.0
-    frame_interval = 1.0 / desired_fps
+    global jpeg_quality
     jpeg_quality = 75 
 
     time.sleep(0.5)
@@ -163,11 +167,8 @@ async def transmit(websocket,path):
         
         if videoSize[0] == 0 or videoSize[1] == 0:
             raise SizeError
-
-        next_frame_time = time.time()
         
         while onPage and not stop:
-            # if time.time() > next_frame_time:
             frame = cam.capture_array()
 
             if frame is not None:
@@ -177,10 +178,6 @@ async def transmit(websocket,path):
                 data = data[2:len(data)-1]
                 await websocket.send(data)
             await asyncio.sleep(0.001)
-
-            #     next_frame_time += frame_interval
-            # else:
-            #     await asyncio.sleep(0.001)
 
             if mode > 1:
                 onPage = False

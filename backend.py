@@ -18,7 +18,6 @@ GPIO.setup(25,GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 def checkSwitch():
     while True:
-        time.sleep(1)
         if GPIO.input(25) == 0:
             break
     subprocess.call(['sh','./script.sh'])
@@ -40,7 +39,7 @@ CORS(app)
 cam = Picamera2()
 cam2_config = cam.create_video_configuration(main={"size": (320, 240), "format": "XRGB8888"},controls={'FrameRate': 5})
 cam.configure(cam2_config)
-global jpeg_quality
+jpeg_quality = 75
 
 @app.route('/water', methods = ['GET'])
 def water_func():
@@ -48,6 +47,7 @@ def water_func():
     # Record all video whilst underwater
     # Record log of events whilst underwater
     global mode
+    global robotController
 
 
     if mode != 2:
@@ -60,7 +60,8 @@ def water_func():
         for x in range(0,len(array)/2):
             newArr.append(array[x*2],array[x*2+1])
         
-        robotController.start_mission(newArr)
+        robotController.mission_array = mission_array
+        robotController.start_mission = True
 
     return str(mode)
 
@@ -117,9 +118,14 @@ def settings_func():
     global mode
     global robotController
     global jpeg_quality
+    global cam
+    print(cam.controls)
+    if 'quality' in request.args:
+        jpeg_quality = int(request.args['quality'])
+        print(jpeg_quality)
     if 'exposure' in request.args:
         print(request.args['exposure'])
-        cam.controls['ExposureValue'] = int(request.args['exposure'])
+        cam.set_controls({'ExposureValue': float(request.args['exposure'])})
     if 'rightTrim' in request.args:
         robotController.rightTrim = float(request.args['rightTrim'])
     if 'leftTrim' in request.args:
@@ -128,10 +134,7 @@ def settings_func():
         robotController.speed_mode = int(request.args['speed'])
     if 'brightness' in request.args:
         print(request.args['brightness'])
-        cam.controls['Brightness'] = float(request.args['brightness'])
-    if 'quality' in request.args:
-        jpeg_quality = int(request.args['quality'])
-        request.args['quality']
+        cam.set_controls({'Brightness': float(request.args['brightness'])})
     if mode != 3:
         mode = 3
         robotController.mode=3
@@ -149,13 +152,10 @@ async def transmit(websocket,path):
     global stop
     global cam
     global jpeg_quality
-    jpeg_quality = 75 
 
-    time.sleep(0.5)
     print("Client Connected !")
     
     cam.start()
-    time.sleep(2)
     
     try :
         videoSize = [size, size]

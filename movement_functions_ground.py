@@ -58,7 +58,7 @@ def map_to_value(left,right):
 def initialise_neutral_point(left_motor_pin, right_motor_pin):
     pi.set_servo_pulsewidth(left_motor_pin, 1000)
     pi.set_servo_pulsewidth(right_motor_pin, 1000)
-    time.sleep(10)
+    time.sleep(3)
     print("Neutral Setpoint set at 1000")
     # Most likely will add a function for 180 deg phase difference between legs
 

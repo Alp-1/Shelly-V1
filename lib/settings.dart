@@ -17,7 +17,7 @@ class _SettingsState extends State<Settings>{
   double _rightTrimming = 20;
   double _exposure = 0;
   double _speed = 1;
-  double _quality = 10;
+  double _quality = 75;
   double _brightness = 0;
   TextEditingController _leftTrimController = TextEditingController();
   TextEditingController _rightTrimController = TextEditingController();

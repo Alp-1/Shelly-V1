@@ -1,4 +1,5 @@
 
+![shelly-banner](https://github.com/user-attachments/assets/eb581776-ccef-45be-9879-fe92661eba2b)
 
 This project aims to develop a ultra low-cost legged unit that can be utilised both on ground and in water for surveying an inspection.
 

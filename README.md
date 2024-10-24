@@ -24,4 +24,5 @@ This project aims to develop a ultra low-cost legged unit that can be utilised b
 
 ## Unit Phamplet
 
-[Phamplet.pdf](https://github.com/user-attachments/files/17513635/Phamplet.pdf)
+![Phamplet](https://github.com/user-attachments/assets/1aca5fb8-ff1d-41e5-8dca-10b2439dd2c5)
+

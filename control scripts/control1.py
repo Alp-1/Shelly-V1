@@ -60,8 +60,9 @@ def map_to_value(v1):
     return int(base_mapped)    
 
 def stop_motion(left_motor_pin,right_motor_pin):
-    self.pi.set_servo_pulsewidth(left_motor_pin, 1000)
-    self.pi.set_servo_pulsewidth(right_motor_pin, 1000)
+    pi = pigpio.pi()
+    pi.set_servo_pulsewidth(left_motor_pin, 1000)
+    pi.set_servo_pulsewidth(right_motor_pin, 1000)
 
 def is_float(string):
      if string.replace(".","").isnumeric():
@@ -79,7 +80,7 @@ def get_heading(start):
              try:
                   if is_float(data):
                      if start:
-                         set_target(float(data))
+                         movement_functions_ground.set_target(float(data))
                          start = False
                      global_heading = float(data)
              except:

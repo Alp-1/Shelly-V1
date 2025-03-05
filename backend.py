@@ -8,21 +8,9 @@ import time
 from picamera2 import Picamera2
 from control1 import Controller
 import pigpio
-import subprocess
 from multiprocessing import Process, Value
-import sys
-import RPi.GPIO as GPIO
 from functools import partial
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(25,GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
-def checkSwitch():
-    while True:
-        if GPIO.input(25) == 0:
-            break
-    subprocess.call(['sh','./script.sh'])
-    sys.exit("Resetting")
-    
 pi = pigpio.pi()
 
 class SizeError(Exception):
@@ -57,10 +45,10 @@ def water_func():
     if 'commands' in request.args:
         array = request.args['commands'].split(',')
         newArr = []
-        for x in range(0,len(array)/2):
-            newArr.append(array[x*2],array[x*2+1])
-        
-        robotController.mission_array = mission_array
+        for x in range(0,len(array)//2):
+            newArr.append([array[x*2],array[x*2+1]])
+
+        robotController.mission_array = newArr
         robotController.start_mission = True
 
     return str(mode)
@@ -211,9 +199,6 @@ liveFeed()
 #t3 = Thread(target=checkSwitch())
 #t3.daemon = True
 #t3.start()
-        
-
-
 
 
 
